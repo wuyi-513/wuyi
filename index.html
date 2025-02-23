@@ -3,14 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的網站</title>
+    <title>今天吃什麼？</title>
     <style>
-        body { text-align: center; font-family: Arial, sans-serif; background-color: #f4f4f4; }
-        h1 { color: #333; margin-top: 50px; }
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            padding-top: 50px;
+        }
+        h1 {
+            color: #333;
+        }
+        #wheel {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            border: 10px solid #444;
+            position: relative;
+            margin: 20px auto;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1);
+        }
+        .slice {
+            width: 50%;
+            height: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0% 0%;
+            background-color: #f1c40f;
+            color: white;
+            text-align: center;
+            line-height: 150px;
+            font-weight: bold;
+        }
+        #pointer {
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 30px solid red;
+            margin: 0 auto;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #e74c3c;
+        }
     </style>
 </head>
 <body>
-    <h1>朱阿寶歡迎來到我的網站！</h1>
-    <p>這是我使用 GitHub Pages 架設的第一個網站 🎉</p>
+
+    <h1>今天吃什麼？🎡🍽️</h1>
+
+    <!-- 指針 -->
+    <div id="pointer"></div>
+
+    <!-- 轉盤 -->
+    <div id="wheel"></div>
+
+    <!-- 按鈕 -->
+    <button onclick="spinWheel()">開始轉！</button>
+
+    <!-- 結果 -->
+    <div id="result"></div>
+
+    <script>
+        // 餐點選項
+        const options = ["牛肉麵", "便當", "拉麵", "火鍋", "壽司", "炸雞", "燒烤", "義大利麵"];
+
+        const wheel = document.getElementById("wheel");
+        const resultDiv = document.getElementById("result");
+        let deg = 0;
+
+        // 初始化轉盤
+        function createWheel() {
+            const angle = 360 / options.length;
+            options.forEach((option, index) => {
+                const slice = document.createElement("div");
+                slice.classList.add("slice");
+                slice.style.transform = `rotate(${angle * index}deg) skewY(${90 - angle}deg)`;
+                slice.style.backgroundColor = `hsl(${(index * 360) / options.length}, 70%, 50%)`;
+                slice.innerHTML = `<span style="transform: skewY(-${90 - angle}deg); display: block;">${option}</span>`;
+                wheel.appendChild(slice);
+            });
+        }
+
+        // 轉動轉盤
+        function spinWheel() {
+            resultDiv.innerHTML = "";
+            const spins = Math.floor(Math.random() * 5) + 5; // 隨機轉圈數
+            const anglePerSlice = 360 / options.length;
+            const randomSlice = Math.floor(Math.random() * options.length);
+            const extraDegrees = randomSlice * anglePerSlice + anglePerSlice / 2;
+
+            deg = (spins * 360) + extraDegrees;
+            wheel.style.transform = `rotate(${deg}deg)`;
+
+            // 等待轉盤結束後顯示結果
+            setTimeout(() => {
+                resultDiv.innerHTML = `今天就吃 👉 <strong>${options[randomSlice]}</strong> 🍽️！`;
+            }, 5000); // 與 CSS transition 時間同步 (5s)
+        }
+
+        createWheel();
+    </script>
+
 </body>
 </html>
