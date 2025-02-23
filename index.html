@@ -48,12 +48,23 @@
             border-radius: 5px;
             position: relative;
         }
-        .player {
+        .player1 {
             width: 20px;
             height: 20px;
             background-color: #d63384;
             border-radius: 50%;
             position: absolute;
+            top: 5px;
+            left: 5px;
+        }
+        .player2 {
+            width: 20px;
+            height: 20px;
+            background-color: #3498db;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
         }
         #diceButton {
             padding: 10px 20px;
@@ -70,9 +81,14 @@
         }
         #result {
             margin-top: 20px;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             color: #e63946;
+        }
+        #currentPlayer {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -90,6 +106,7 @@
     <!-- 大富翁棋盤 -->
     <div id="board"></div>
     <button id="diceButton" onclick="rollDice()">擲骰子！</button>
+    <div id="currentPlayer">當前玩家：玩家 1</div>
     <div id="result"></div>
 
     <!-- 真心話大冒險 -->
@@ -135,7 +152,8 @@
             "閉上眼睛，給個驚喜 🎊"
         ];
 
-        let currentPosition = 0;
+        let playerPositions = [0, 0];
+        let currentPlayer = 0;
 
         function createBoard() {
             const board = document.getElementById("board");
@@ -146,9 +164,14 @@
                 tile.setAttribute("data-index", index);
                 board.appendChild(tile);
             });
-            const player = document.createElement("div");
-            player.classList.add("player");
-            document.querySelector(".tile").appendChild(player);
+            // 初始化兩個玩家棋子
+            const player1 = document.createElement("div");
+            player1.classList.add("player1");
+            document.querySelector(".tile").appendChild(player1);
+
+            const player2 = document.createElement("div");
+            player2.classList.add("player2");
+            document.querySelector(".tile").appendChild(player2);
         }
 
         function rollDice() {
@@ -158,12 +181,24 @@
 
         function movePlayer(steps) {
             const tiles = document.querySelectorAll(".tile");
-            tiles[currentPosition].innerHTML = tiles[currentPosition].innerText; // 移除舊的棋子
-            currentPosition = (currentPosition + steps) % tiles.length;
-            const player = document.createElement("div");
-            player.classList.add("player");
-            tiles[currentPosition].appendChild(player);
-            document.getElementById("result").innerText = `你的任務是：${tasks[currentPosition]}`;
+            const playerClass = currentPlayer === 0 ? "player1" : "player2";
+            
+            // 移除舊的棋子
+            const currentTile = tiles[playerPositions[currentPlayer]];
+            const playerPiece = currentTile.querySelector(`.${playerClass}`);
+            currentTile.removeChild(playerPiece);
+
+            // 更新位置
+            playerPositions[currentPlayer] = (playerPositions[currentPlayer] + steps) % tiles.length;
+            const newTile = tiles[playerPositions[currentPlayer]];
+            newTile.appendChild(playerPiece);
+
+            // 顯示當前任務
+            document.getElementById("result").innerText = `玩家 ${currentPlayer + 1} 的任務是：${tasks[playerPositions[currentPlayer]]}`;
+
+            // 切換玩家
+            currentPlayer = (currentPlayer + 1) % 2;
+            document.getElementById("currentPlayer").innerText = `當前玩家：玩家 ${currentPlayer + 1}`;
         }
 
         function playTruthDare(type) {
