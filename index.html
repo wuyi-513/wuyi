@@ -92,6 +92,64 @@
         #mainContent {
             display: none;
         }
+        /* 大富翁棋盤 */
+        #board {
+            display: grid;
+            grid-template-columns: repeat(5, 60px);
+            grid-template-rows: repeat(5, 60px);
+            gap: 2px;
+            justify-content: center;
+            margin: 20px auto;
+        }
+        .tile {
+            width: 60px;
+            height: 60px;
+            background-color: #f8bbd0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            color: white;
+            border-radius: 5px;
+            position: relative;
+        }
+        .player1, .player2 {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            position: absolute;
+        }
+        .player1 {
+            background-color: #d63384;
+            top: 5px;
+            left: 5px;
+        }
+        .player2 {
+            background-color: #3498db;
+            bottom: 5px;
+            right: 5px;
+        }
+        #diceButton {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #d63384;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        #currentPlayer {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #e63946;
+        }
     </style>
 </head>
 <body>
@@ -114,12 +172,6 @@
     <!-- 主遊戲內容 -->
     <div id="mainContent">
         <h1>情趣互動大富翁 💖🎲</h1>
-        <div id="menu">
-            <button onclick="showSection('board')">開始遊戲</button>
-            <button onclick="showSection('truthDare')">真心話大冒險</button>
-            <button onclick="showSection('questionnaire')">情侶問卷</button>
-            <button onclick="showSection('wishlist')">浪漫願望清單</button>
-        </div>
         <div id="board"></div>
         <button id="diceButton" onclick="rollDice()">擲骰子！</button>
         <div id="currentPlayer">當前玩家：玩家 1</div>
@@ -155,21 +207,26 @@
 
         // 遊戲邏輯
         const tasks = [
-            "深情對望 30 秒 💕",
-            "輕輕親一下 💋",
-            "神秘驚喜一個 🎁",
-            "說一句情話 💖",
-            "幫對方按摩 5 分鐘 💆‍♀️",
-            "分享一個小秘密 🤫",
-            "給對方一個大大的擁抱 🤗",
-            "今晚聽你的安排 😉",
-            "跳一段舞 💃",
-            "輕輕耳語一句話 🗣️",
-            "玩個小遊戲 🎮",
+            "開始 🎉",
+            "深情對望 💕",
+            "親一下 💋",
+            "說句情話 💖",
+            "分享秘密 🤫",
+            "按摩 5 分鐘 💆‍♀️",
+            "擁抱 🤗",
+            "跳舞 💃",
+            "驚喜 🎁",
+            "合照 📸",
+            "再擲一次 🎲",
+            "小遊戲 🎮",
+            "晚餐安排 🍽️",
+            "閉眼驚喜 🎊",
             "交換禮物 🎁",
-            "一起拍張合照 📸",
-            "說出三個你愛對方的理由 ❤️",
-            "閉上眼睛，給個驚喜 🎊"
+            "愛的宣言 ❤️",
+            "散步 🚶‍♀️",
+            "擁抱 🤗",
+            "小挑戰 💪",
+            "再見 👋"
         ];
 
         let playerPositions = [0, 0];
@@ -178,13 +235,22 @@
         function createBoard() {
             const board = document.getElementById("board");
             board.innerHTML = "";
-            tasks.forEach((task, index) => {
+            for (let i = 0; i < 20; i++) {
                 const tile = document.createElement("div");
                 tile.classList.add("tile");
-                tile.innerText = task;
-                tile.setAttribute("data-index", index);
+                tile.innerText = tasks[i % tasks.length];
+                tile.setAttribute("data-index", i);
                 board.appendChild(tile);
-            });
+            }
+
+            // 添加玩家棋子
+            const player1 = document.createElement("div");
+            player1.classList.add("player1");
+            board.children[0].appendChild(player1);
+
+            const player2 = document.createElement("div");
+            player2.classList.add("player2");
+            board.children[0].appendChild(player2);
         }
 
         function rollDice() {
@@ -194,16 +260,24 @@
 
         function movePlayer(steps) {
             const tiles = document.querySelectorAll(".tile");
+            const playerClass = currentPlayer === 0 ? "player1" : "player2";
+
+            // 移除舊棋子
+            const currentTile = tiles[playerPositions[currentPlayer]];
+            const playerPiece = currentTile.querySelector(`.${playerClass}`);
+            currentTile.removeChild(playerPiece);
+
+            // 更新位置
             playerPositions[currentPlayer] = (playerPositions[currentPlayer] + steps) % tiles.length;
+            const newTile = tiles[playerPositions[currentPlayer]];
+            newTile.appendChild(playerPiece);
 
-            document.getElementById("result").innerText = `${playerNames[currentPlayer]} 的任務是：${tasks[playerPositions[currentPlayer]]}`;
+            // 顯示當前任務
+            document.getElementById("result").innerText = `${playerNames[currentPlayer]} 的任務是：${newTile.innerText}`;
 
+            // 切換玩家
             currentPlayer = (currentPlayer + 1) % 2;
             document.getElementById("currentPlayer").innerText = `當前玩家：${playerNames[currentPlayer]}`;
-        }
-
-        function showSection(sectionId) {
-            // 可以根據需要顯示其他部分
         }
     </script>
 
