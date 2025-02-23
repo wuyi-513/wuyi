@@ -120,7 +120,7 @@
             height: 20px;
             border-radius: 50%;
             position: absolute;
-            transition: transform 0.5s ease;
+            transition: transform 0.3s ease;
         }
         .player1 {
             background-color: #d63384;
@@ -179,6 +179,11 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.3);
             z-index: 2000;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
         }
         #taskModal button {
             margin-top: 10px;
@@ -188,6 +193,10 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        #taskModal button:hover {
+            transform: scale(1.1);
         }
     </style>
 </head>
@@ -301,29 +310,34 @@
 
         function rollDice() {
             const diceRoll = Math.floor(Math.random() * 6) + 1;
-            movePlayer(diceRoll);
+            animatePlayerMove(diceRoll);
         }
 
-        function movePlayer(steps) {
+        function animatePlayerMove(steps) {
             const tiles = document.querySelectorAll(".tile");
             const playerClass = currentPlayer === 0 ? "player1" : "player2";
+            let moveCount = 0;
 
-            // 移除舊棋子
-            const currentTile = tiles[playerPositions[currentPlayer]];
-            const playerPiece = currentTile.querySelector(`.${playerClass}`);
-            currentTile.removeChild(playerPiece);
+            const moveInterval = setInterval(() => {
+                if (moveCount < steps) {
+                    const currentTile = tiles[playerPositions[currentPlayer]];
+                    const playerPiece = currentTile.querySelector(`.${playerClass}`);
+                    currentTile.removeChild(playerPiece);
 
-            // 更新位置
-            playerPositions[currentPlayer] = (playerPositions[currentPlayer] + steps) % tiles.length;
-            const newTile = tiles[playerPositions[currentPlayer]];
-            newTile.appendChild(playerPiece);
+                    playerPositions[currentPlayer] = (playerPositions[currentPlayer] + 1) % tiles.length;
+                    const newTile = tiles[playerPositions[currentPlayer]];
+                    newTile.appendChild(playerPiece);
 
-            // 顯示任務彈窗
-            showTaskModal(`${playerNames[currentPlayer]} 的任務`, newTile.innerText);
+                    moveCount++;
+                } else {
+                    clearInterval(moveInterval);
+                    const newTile = tiles[playerPositions[currentPlayer]];
+                    showTaskModal(`${playerNames[currentPlayer]} 的任務`, newTile.innerText);
 
-            // 切換玩家
-            currentPlayer = (currentPlayer + 1) % 2;
-            document.getElementById("currentPlayer").innerText = `當前玩家：${playerNames[currentPlayer]}`;
+                    currentPlayer = (currentPlayer + 1) % 2;
+                    document.getElementById("currentPlayer").innerText = `當前玩家：${playerNames[currentPlayer]}`;
+                }
+            }, 500);
         }
 
         // 任務彈窗
