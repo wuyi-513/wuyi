@@ -9,63 +9,78 @@
             text-align: center;
             font-family: Arial, sans-serif;
             background-color: #ffe6f2;
-            padding-top: 50px;
+            overflow: hidden;
         }
         h1 {
             color: #d63384;
         }
-        #menu button {
-            padding: 10px 20px;
-            font-size: 18px;
-            background-color: #d63384;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 10px;
-            transition: background-color 0.3s ease;
-        }
-        #menu button:hover {
-            background-color: #b12c6e;
-        }
-        #board {
-            display: grid;
-            grid-template-columns: repeat(5, 60px);
-            grid-template-rows: repeat(5, 60px);
-            gap: 5px;
-            justify-content: center;
-            margin: 20px auto;
-        }
-        .tile {
-            width: 60px;
-            height: 60px;
-            background-color: #f8bbd0;
+        #introAnimation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffe6f2;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 12px;
-            color: white;
-            border-radius: 5px;
-            position: relative;
+            z-index: 1000;
         }
-        .player1, .player2 {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
+        .character {
+            width: 100px;
+            height: 100px;
             position: absolute;
-            transition: transform 0.5s ease;
+            top: 40%;
         }
-        .player1 {
-            background-color: #d63384;
-            top: 5px;
-            left: 5px;
+        #boy {
+            left: -150px;
+            background: url('https://via.placeholder.com/100?text=👦') no-repeat center/contain;
+            animation: boyRun 3s forwards;
         }
-        .player2 {
-            background-color: #3498db;
-            bottom: 5px;
-            right: 5px;
+        #girl {
+            right: -150px;
+            background: url('https://via.placeholder.com/100?text=👧') no-repeat center/contain;
+            animation: girlRun 3s forwards;
         }
-        #diceButton {
+        @keyframes boyRun {
+            to { left: 45%; }
+        }
+        @keyframes girlRun {
+            to { right: 45%; }
+        }
+        #kiss {
+            display: none;
+            position: absolute;
+            top: 35%;
+            font-size: 50px;
+            animation: kissPop 1s ease-in-out forwards;
+        }
+        @keyframes kissPop {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+        #nameInput {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffe6f2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        #nameInput input {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #nameInput button {
             padding: 10px 20px;
             font-size: 18px;
             background-color: #d63384;
@@ -73,80 +88,72 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            margin-top: 20px;
-            animation: bounce 1s infinite;
         }
-        #diceButton:hover {
-            background-color: #b12c6e;
-        }
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateY(0);
-            }
-            40% {
-                transform: translateY(-10px);
-            }
-            60% {
-                transform: translateY(-5px);
-            }
-        }
-        #result {
-            margin-top: 20px;
-            font-size: 20px;
-            font-weight: bold;
-            color: #e63946;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-        #currentPlayer {
-            margin-top: 10px;
-            font-size: 18px;
-            font-weight: bold;
+        #mainContent {
+            display: none;
         }
     </style>
 </head>
 <body>
 
-    <h1>情趣互動大富翁 💖🎲</h1>
-
-    <div id="menu">
-        <button onclick="showSection('board')">開始遊戲</button>
-        <button onclick="showSection('truthDare')">真心話大冒險</button>
-        <button onclick="showSection('questionnaire')">情侶問卷</button>
-        <button onclick="showSection('wishlist')">浪漫願望清單</button>
+    <!-- 開場動畫 -->
+    <div id="introAnimation">
+        <div id="boy" class="character"></div>
+        <div id="girl" class="character"></div>
+        <div id="kiss">💏</div>
     </div>
 
-    <!-- 大富翁棋盤 -->
-    <div id="board"></div>
-    <button id="diceButton" onclick="rollDice()">擲骰子！</button>
-    <div id="currentPlayer">當前玩家：玩家 1</div>
-    <div id="result"></div>
-
-    <!-- 真心話大冒險 -->
-    <div id="truthDare" style="display:none;">
-        <h2>真心話或大冒險 🎲</h2>
-        <button onclick="playTruthDare('truth')">真心話</button>
-        <button onclick="playTruthDare('dare')">大冒險</button>
-        <div id="truthDareResult"></div>
+    <!-- 名稱輸入畫面 -->
+    <div id="nameInput">
+        <h2>輸入玩家名稱</h2>
+        <input type="text" id="player1Name" placeholder="玩家 1 名稱">
+        <input type="text" id="player2Name" placeholder="玩家 2 名稱">
+        <button onclick="startGame()">開始遊戲</button>
     </div>
 
-    <!-- 情侶問卷 -->
-    <div id="questionnaire" style="display:none;">
-        <h2>情侶問卷 📝</h2>
-        <p>1. 你最喜歡我們一起做的事情是什麼？</p>
-        <p>2. 如果可以一起去旅行，你想去哪裡？</p>
-        <p>3. 描述對方最可愛的一個小習慣。</p>
-    </div>
-
-    <!-- 浪漫願望清單 -->
-    <div id="wishlist" style="display:none;">
-        <h2>浪漫願望清單 ✨</h2>
-        <input type="text" id="wishInput" placeholder="輸入願望...">
-        <button onclick="addWish()">新增願望</button>
-        <ul id="wishlistItems"></ul>
+    <!-- 主遊戲內容 -->
+    <div id="mainContent">
+        <h1>情趣互動大富翁 💖🎲</h1>
+        <div id="menu">
+            <button onclick="showSection('board')">開始遊戲</button>
+            <button onclick="showSection('truthDare')">真心話大冒險</button>
+            <button onclick="showSection('questionnaire')">情侶問卷</button>
+            <button onclick="showSection('wishlist')">浪漫願望清單</button>
+        </div>
+        <div id="board"></div>
+        <button id="diceButton" onclick="rollDice()">擲骰子！</button>
+        <div id="currentPlayer">當前玩家：玩家 1</div>
+        <div id="result"></div>
     </div>
 
     <script>
+        let playerNames = ["玩家 1", "玩家 2"];
+
+        // 開場動畫
+        window.onload = function() {
+            setTimeout(() => {
+                document.getElementById("kiss").style.display = "block";
+                setTimeout(() => {
+                    document.getElementById("introAnimation").style.display = "none";
+                    document.getElementById("nameInput").style.display = "flex";
+                }, 2000);
+            }, 3000);
+        };
+
+        // 開始遊戲
+        function startGame() {
+            const p1 = document.getElementById("player1Name").value;
+            const p2 = document.getElementById("player2Name").value;
+            if (p1) playerNames[0] = p1;
+            if (p2) playerNames[1] = p2;
+
+            document.getElementById("nameInput").style.display = "none";
+            document.getElementById("mainContent").style.display = "block";
+            document.getElementById("currentPlayer").innerText = `當前玩家：${playerNames[0]}`;
+            createBoard();
+        }
+
+        // 遊戲邏輯
         const tasks = [
             "深情對望 30 秒 💕",
             "輕輕親一下 💋",
@@ -170,6 +177,7 @@
 
         function createBoard() {
             const board = document.getElementById("board");
+            board.innerHTML = "";
             tasks.forEach((task, index) => {
                 const tile = document.createElement("div");
                 tile.classList.add("tile");
@@ -177,97 +185,26 @@
                 tile.setAttribute("data-index", index);
                 board.appendChild(tile);
             });
-            // 初始化兩個玩家棋子
-            const player1 = document.createElement("div");
-            player1.classList.add("player1");
-            document.querySelector(".tile").appendChild(player1);
-
-            const player2 = document.createElement("div");
-            player2.classList.add("player2");
-            document.querySelector(".tile").appendChild(player2);
         }
 
         function rollDice() {
-            const diceButton = document.getElementById("diceButton");
-            diceButton.disabled = true;
-            diceButton.innerText = "擲骰子中...";
-
-            setTimeout(() => {
-                const diceRoll = Math.floor(Math.random() * 6) + 1;
-                movePlayer(diceRoll);
-                diceButton.disabled = false;
-                diceButton.innerText = "擲骰子！";
-            }, 1000); // 模擬擲骰子動畫延遲
+            const diceRoll = Math.floor(Math.random() * 6) + 1;
+            movePlayer(diceRoll);
         }
 
         function movePlayer(steps) {
             const tiles = document.querySelectorAll(".tile");
-            const playerClass = currentPlayer === 0 ? "player1" : "player2";
-            
-            // 移除舊的棋子
-            const currentTile = tiles[playerPositions[currentPlayer]];
-            const playerPiece = currentTile.querySelector(`.${playerClass}`);
-            currentTile.removeChild(playerPiece);
-
-            // 更新位置
             playerPositions[currentPlayer] = (playerPositions[currentPlayer] + steps) % tiles.length;
-            const newTile = tiles[playerPositions[currentPlayer]];
-            newTile.appendChild(playerPiece);
 
-            // 顯示當前任務
-            const resultDiv = document.getElementById("result");
-            resultDiv.style.opacity = 0;
-            setTimeout(() => {
-                resultDiv.innerText = `玩家 ${currentPlayer + 1} 的任務是：${tasks[playerPositions[currentPlayer]]}`;
-                resultDiv.style.opacity = 1;
-            }, 300);
+            document.getElementById("result").innerText = `${playerNames[currentPlayer]} 的任務是：${tasks[playerPositions[currentPlayer]]}`;
 
-            // 切換玩家
             currentPlayer = (currentPlayer + 1) % 2;
-            document.getElementById("currentPlayer").innerText = `當前玩家：玩家 ${currentPlayer + 1}`;
-        }
-
-        function playTruthDare(type) {
-            const truths = [
-                "你最難忘的浪漫時刻是什麼？",
-                "你對對方最喜歡的特質是？",
-                "描述第一次見到對方的感覺。"
-            ];
-
-            const dares = [
-                "對對方唱一首情歌。",
-                "擁抱對方 30 秒。",
-                "說出三件你愛對方的理由。"
-            ];
-
-            const result = document.getElementById("truthDareResult");
-            const item = type === "truth" ? truths[Math.floor(Math.random() * truths.length)] : dares[Math.floor(Math.random() * dares.length)];
-            result.innerText = `${type === 'truth' ? '真心話' : '大冒險'}：${item}`;
-        }
-
-        function addWish() {
-            const input = document.getElementById("wishInput");
-            const wishlist = document.getElementById("wishlistItems");
-            if (input.value.trim() !== "") {
-                const li = document.createElement("li");
-                li.textContent = input.value;
-                wishlist.appendChild(li);
-                input.value = "";
-            }
+            document.getElementById("currentPlayer").innerText = `當前玩家：${playerNames[currentPlayer]}`;
         }
 
         function showSection(sectionId) {
-            ["board", "truthDare", "questionnaire", "wishlist"].forEach(id => {
-                document.getElementById(id).style.display = id === sectionId ? "grid" : "none";
-                if (id === "board" && sectionId === "board") {
-                    document.getElementById("diceButton").style.display = "block";
-                } else if (id === "board") {
-                    document.getElementById("diceButton").style.display = "none";
-                }
-            });
+            // 可以根據需要顯示其他部分
         }
-
-        createBoard();
     </script>
 
 </body>
