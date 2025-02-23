@@ -31,16 +31,22 @@
             height: 100px;
             position: absolute;
             top: 40%;
+            animation: runAnimation 1s infinite;
+        }
+        @keyframes runAnimation {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
         }
         #boy {
             left: -150px;
             background: url('https://via.placeholder.com/100?text=👦') no-repeat center/contain;
-            animation: boyRun 3s forwards;
+            animation: boyRun 3s forwards, runAnimation 1s infinite;
         }
         #girl {
             right: -150px;
             background: url('https://via.placeholder.com/100?text=👧') no-repeat center/contain;
-            animation: girlRun 3s forwards;
+            animation: girlRun 3s forwards, runAnimation 1s infinite;
         }
         @keyframes boyRun {
             to { left: 45%; }
@@ -95,8 +101,8 @@
         /* 大富翁棋盤 */
         #board {
             display: grid;
-            grid-template-columns: repeat(5, 60px);
-            grid-template-rows: repeat(5, 60px);
+            grid-template-columns: repeat(7, 60px);
+            grid-template-rows: repeat(7, 60px);
             gap: 2px;
             justify-content: center;
             margin: 20px auto;
@@ -114,6 +120,15 @@
             position: relative;
             border: 2px solid #d63384;
             box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+        .sweet {
+            background-color: #ffc0cb;
+        }
+        .adventure {
+            background-color: #add8e6;
+        }
+        .reward {
+            background-color: #ffd700;
         }
         .player1, .player2 {
             width: 20px;
@@ -262,26 +277,25 @@
 
         // 遊戲邏輯
         const tasks = [
-            "開始 🎉",
-            "深情對望 💕",
-            "親一下 💋",
-            "說句情話 💖",
-            "分享秘密 🤫",
-            "按摩 5 分鐘 💆‍♀️",
-            "擁抱 🤗",
-            "跳舞 💃",
-            "驚喜 🎁",
-            "合照 📸",
-            "再擲一次 🎲",
-            "小遊戲 🎮",
-            "晚餐安排 🍽️",
-            "閉眼驚喜 🎊",
-            "交換禮物 🎁",
-            "愛的宣言 ❤️",
-            "散步 🚶‍♀️",
-            "擁抱 🤗",
-            "小挑戰 💪",
-            "再見 👋"
+            { type: "sweet", text: "深情對望 💕" },
+            { type: "adventure", text: "親一下 💋" },
+            { type: "reward", text: "說句情話 💖" },
+            { type: "sweet", text: "分享秘密 🤫" },
+            { type: "adventure", text: "按摩 5 分鐘 💆‍♀️" },
+            { type: "reward", text: "擁抱 🤗" },
+            { type: "sweet", text: "跳舞 💃" },
+            { type: "adventure", text: "驚喜 🎁" },
+            { type: "reward", text: "合照 📸" },
+            { type: "sweet", text: "再擲一次 🎲" },
+            { type: "adventure", text: "小遊戲 🎮" },
+            { type: "reward", text: "晚餐安排 🍽️" },
+            { type: "sweet", text: "閉眼驚喜 🎊" },
+            { type: "adventure", text: "交換禮物 🎁" },
+            { type: "reward", text: "愛的宣言 ❤️" },
+            { type: "sweet", text: "散步 🚶‍♀️" },
+            { type: "adventure", text: "擁抱 🤗" },
+            { type: "reward", text: "小挑戰 💪" },
+            { type: "sweet", text: "再見 👋" }
         ];
 
         let playerPositions = [0, 0];
@@ -290,13 +304,13 @@
         function createBoard() {
             const board = document.getElementById("board");
             board.innerHTML = "";
-            for (let i = 0; i < 20; i++) {
+            tasks.forEach((task, i) => {
                 const tile = document.createElement("div");
-                tile.classList.add("tile");
-                tile.innerText = tasks[i % tasks.length];
+                tile.classList.add("tile", task.type);
+                tile.innerText = task.text;
                 tile.setAttribute("data-index", i);
                 board.appendChild(tile);
-            }
+            });
 
             // 添加玩家棋子
             const player1 = document.createElement("div");
