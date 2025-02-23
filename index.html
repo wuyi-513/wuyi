@@ -135,7 +135,11 @@
             height: 20px;
             border-radius: 50%;
             position: absolute;
-            transition: transform 0.3s ease, top 0.3s ease;
+            animation: jump 0.5s ease infinite alternate;
+        }
+        @keyframes jump {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
         }
         .player1 {
             background-color: #d63384;
@@ -405,6 +409,7 @@
                 } else {
                     clearInterval(moveInterval);
                     const newTile = tiles[playerPositions[currentPlayer]];
+                    playerPiece.style.animation = "pop 0.5s ease";
                     showTaskModal(`${playerNames[currentPlayer]} 的任務`, newTile.innerText);
 
                     currentPlayer = (currentPlayer + 1) % 2;
