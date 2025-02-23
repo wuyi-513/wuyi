@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>今天吃什麼？</title>
+    <title>情趣互動轉盤</title>
     <style>
         body {
             text-align: center;
             font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
+            background-color: #ffe6f2;
             padding-top: 50px;
         }
         h1 {
-            color: #333;
+            color: #d63384;
         }
         #wheel {
             width: 300px;
             height: 300px;
             border-radius: 50%;
-            border: 10px solid #444;
+            border: 10px solid #d63384;
             position: relative;
             margin: 20px auto;
             overflow: hidden;
@@ -32,7 +32,7 @@
             top: 50%;
             left: 50%;
             transform-origin: 0% 0%;
-            background-color: #f1c40f;
+            background-color: #f8bbd0;
             color: white;
             text-align: center;
             line-height: 150px;
@@ -43,13 +43,13 @@
             height: 0;
             border-left: 20px solid transparent;
             border-right: 20px solid transparent;
-            border-bottom: 30px solid red;
+            border-bottom: 30px solid #d63384;
             margin: 0 auto;
         }
         button {
             padding: 10px 20px;
             font-size: 18px;
-            background-color: #3498db;
+            background-color: #d63384;
             color: white;
             border: none;
             border-radius: 5px;
@@ -57,19 +57,19 @@
             transition: background-color 0.3s ease;
         }
         button:hover {
-            background-color: #2980b9;
+            background-color: #b12c6e;
         }
         #result {
             margin-top: 20px;
             font-size: 24px;
             font-weight: bold;
-            color: #e74c3c;
+            color: #e63946;
         }
     </style>
 </head>
 <body>
 
-    <h1>今天吃什麼？🎡🍽️</h1>
+    <h1>今天的情趣小挑戰 🎡💖</h1>
 
     <!-- 指針 -->
     <div id="pointer"></div>
@@ -78,14 +78,23 @@
     <div id="wheel"></div>
 
     <!-- 按鈕 -->
-    <button onclick="spinWheel()">開始轉！</button>
+    <button onclick="spinWheel()">轉動轉盤！</button>
 
     <!-- 結果 -->
     <div id="result"></div>
 
     <script>
-        // 餐點選項
-        const options = ["牛肉麵", "便當", "拉麵", "火鍋", "壽司", "炸雞", "燒烤", "義大利麵"];
+        // 任務選項
+        const options = [
+            "火辣愛愛計時器 💕",
+            "愛愛冰火五重天 💋",
+            "暴力撕破它 🎁",
+            "現學現賣超火辣 💖",
+            "幫對方按摩 5 分鐘 💆‍♀️",
+            "猜謎小遊戲 🤫",
+            "模仿愛愛 🤗",
+            "今晚聽你的安排 😉"
+        ];
 
         const wheel = document.getElementById("wheel");
         const resultDiv = document.getElementById("result");
@@ -98,7 +107,7 @@
                 const slice = document.createElement("div");
                 slice.classList.add("slice");
                 slice.style.transform = `rotate(${angle * index}deg) skewY(${90 - angle}deg)`;
-                slice.style.backgroundColor = `hsl(${(index * 360) / options.length}, 70%, 50%)`;
+                slice.style.backgroundColor = `hsl(${(index * 360) / options.length}, 70%, 70%)`;
                 slice.innerHTML = `<span style="transform: skewY(-${90 - angle}deg); display: block;">${option}</span>`;
                 wheel.appendChild(slice);
             });
@@ -115,9 +124,9 @@
             deg = (spins * 360) + extraDegrees;
             wheel.style.transform = `rotate(${deg}deg)`;
 
-            // 等待轉盤結束後顯示結果
+            // 顯示結果
             setTimeout(() => {
-                resultDiv.innerHTML = `今天就吃 👉 <strong>${options[randomSlice]}</strong> 🍽️！`;
+                resultDiv.innerHTML = `今天的小挑戰是 👉 <strong>${options[randomSlice]}</strong>`;
             }, 5000); // 與 CSS transition 時間同步 (5s)
         }
 
