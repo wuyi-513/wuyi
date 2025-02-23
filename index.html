@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>情趣互動網站</title>
+    <title>情趣互動大富翁</title>
     <style>
         body {
             text-align: center;
@@ -28,89 +28,72 @@
         #menu button:hover {
             background-color: #b12c6e;
         }
-        #wheel, #truthDare, #questionnaire, #wishlist {
-            display: none;
+        #board {
+            display: grid;
+            grid-template-columns: repeat(5, 60px);
+            grid-template-rows: repeat(5, 60px);
+            gap: 5px;
+            justify-content: center;
+            margin: 20px auto;
+        }
+        .tile {
+            width: 60px;
+            height: 60px;
+            background-color: #f8bbd0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            color: white;
+            border-radius: 5px;
+            position: relative;
+        }
+        .player {
+            width: 20px;
+            height: 20px;
+            background-color: #d63384;
+            border-radius: 50%;
+            position: absolute;
+        }
+        #diceButton {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #d63384;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
             margin-top: 20px;
         }
-        #wheel {
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            border: 10px solid #d63384;
-            position: relative;
-            margin: 20px auto;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(0,0,0,0.2);
-            transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1);
+        #diceButton:hover {
+            background-color: #b12c6e;
         }
-        .slice {
-            width: 50%;
-            height: 50%;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform-origin: 0% 0%;
-            background-color: #f8bbd0;
-            color: white;
-            text-align: center;
-            line-height: 150px;
-            font-weight: bold;
-        }
-        #pointer {
-            width: 0;
-            height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-bottom: 30px solid #d63384;
-            margin: 0 auto;
-        }
-        #result, #truthDareResult, #wishlistResult {
+        #result {
             margin-top: 20px;
             font-size: 24px;
             font-weight: bold;
             color: #e63946;
         }
-        input[type="text"] {
-            padding: 10px;
-            font-size: 16px;
-            width: 200px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        li {
-            background-color: #f8bbd0;
-            margin: 5px;
-            padding: 10px;
-            border-radius: 5px;
-            color: white;
-        }
     </style>
 </head>
 <body>
 
-    <h1>情趣互動網站 💖🎡</h1>
+    <h1>情趣互動大富翁 💖🎲</h1>
 
     <div id="menu">
-        <button onclick="showSection('wheel')">情趣任務轉盤</button>
+        <button onclick="showSection('board')">開始遊戲</button>
         <button onclick="showSection('truthDare')">真心話大冒險</button>
         <button onclick="showSection('questionnaire')">情侶問卷</button>
         <button onclick="showSection('wishlist')">浪漫願望清單</button>
     </div>
 
-    <!-- 指針 -->
-    <div id="pointer"></div>
-
-    <!-- 轉盤 -->
-    <div id="wheel"></div>
-    <button onclick="spinWheel()">轉動轉盤！</button>
+    <!-- 大富翁棋盤 -->
+    <div id="board"></div>
+    <button id="diceButton" onclick="rollDice()">擲骰子！</button>
     <div id="result"></div>
 
     <!-- 真心話大冒險 -->
-    <div id="truthDare">
+    <div id="truthDare" style="display:none;">
         <h2>真心話或大冒險 🎲</h2>
         <button onclick="playTruthDare('truth')">真心話</button>
         <button onclick="playTruthDare('dare')">大冒險</button>
@@ -118,7 +101,7 @@
     </div>
 
     <!-- 情侶問卷 -->
-    <div id="questionnaire">
+    <div id="questionnaire" style="display:none;">
         <h2>情侶問卷 📝</h2>
         <p>1. 你最喜歡我們一起做的事情是什麼？</p>
         <p>2. 如果可以一起去旅行，你想去哪裡？</p>
@@ -126,79 +109,79 @@
     </div>
 
     <!-- 浪漫願望清單 -->
-    <div id="wishlist">
+    <div id="wishlist" style="display:none;">
         <h2>浪漫願望清單 ✨</h2>
         <input type="text" id="wishInput" placeholder="輸入願望...">
         <button onclick="addWish()">新增願望</button>
         <ul id="wishlistItems"></ul>
-        <div id="wishlistResult"></div>
     </div>
 
     <script>
-        // 任務選項
-        const options = [
-            "火辣愛愛計時器 💕",
-            "愛愛冰火五重天 💋",
-            "暴力撕破它 🎁",
-            "現學現賣超火辣 💖",
+        const tasks = [
+            "深情對望 30 秒 💕",
+            "輕輕親一下 💋",
+            "神秘驚喜一個 🎁",
+            "說一句情話 💖",
             "幫對方按摩 5 分鐘 💆‍♀️",
-            "猜謎小遊戲 🤫",
-            "模仿愛愛 🤗",
-            "今晚聽你的安排 😉"
+            "分享一個小秘密 🤫",
+            "給對方一個大大的擁抱 🤗",
+            "今晚聽你的安排 😉",
+            "跳一段舞 💃",
+            "輕輕耳語一句話 🗣️",
+            "玩個小遊戲 🎮",
+            "交換禮物 🎁",
+            "一起拍張合照 📸",
+            "說出三個你愛對方的理由 ❤️",
+            "閉上眼睛，給個驚喜 🎊"
         ];
 
-        const truths = [
-            "你最難忘的浪漫時刻是什麼？",
-            "你對對方最喜歡的特質是？",
-            "描述第一次見到對方的感覺。"
-        ];
+        let currentPosition = 0;
 
-        const dares = [
-            "對對方唱一首情歌。",
-            "擁抱對方 30 秒。",
-            "說出三件你愛對方的理由。"
-        ];
-
-        const wheel = document.getElementById("wheel");
-        const resultDiv = document.getElementById("result");
-        let deg = 0;
-
-        function createWheel() {
-            const angle = 360 / options.length;
-            options.forEach((option, index) => {
-                const slice = document.createElement("div");
-                slice.classList.add("slice");
-                slice.style.transform = `rotate(${angle * index}deg) skewY(${90 - angle}deg)`;
-                slice.style.backgroundColor = `hsl(${(index * 360) / options.length}, 70%, 70%)`;
-                slice.innerHTML = `<span style="transform: skewY(-${90 - angle}deg); display: block;">${option}</span>`;
-                wheel.appendChild(slice);
+        function createBoard() {
+            const board = document.getElementById("board");
+            tasks.forEach((task, index) => {
+                const tile = document.createElement("div");
+                tile.classList.add("tile");
+                tile.innerText = task;
+                tile.setAttribute("data-index", index);
+                board.appendChild(tile);
             });
+            const player = document.createElement("div");
+            player.classList.add("player");
+            document.querySelector(".tile").appendChild(player);
         }
 
-        function spinWheel() {
-            resultDiv.innerHTML = "";
-            const spins = Math.floor(Math.random() * 5) + 5;
-            const anglePerSlice = 360 / options.length;
-            const randomSlice = Math.floor(Math.random() * options.length);
-            const extraDegrees = randomSlice * anglePerSlice + anglePerSlice / 2;
+        function rollDice() {
+            const diceRoll = Math.floor(Math.random() * 6) + 1;
+            movePlayer(diceRoll);
+        }
 
-            deg = (spins * 360) + extraDegrees;
-            wheel.style.transform = `rotate(${deg}deg)`;
-
-            setTimeout(() => {
-                resultDiv.innerHTML = `今天的小挑戰是 👉 <strong>${options[randomSlice]}</strong>`;
-            }, 5000);
+        function movePlayer(steps) {
+            const tiles = document.querySelectorAll(".tile");
+            tiles[currentPosition].innerHTML = tiles[currentPosition].innerText; // 移除舊的棋子
+            currentPosition = (currentPosition + steps) % tiles.length;
+            const player = document.createElement("div");
+            player.classList.add("player");
+            tiles[currentPosition].appendChild(player);
+            document.getElementById("result").innerText = `你的任務是：${tasks[currentPosition]}`;
         }
 
         function playTruthDare(type) {
+            const truths = [
+                "你最難忘的浪漫時刻是什麼？",
+                "你對對方最喜歡的特質是？",
+                "描述第一次見到對方的感覺。"
+            ];
+
+            const dares = [
+                "對對方唱一首情歌。",
+                "擁抱對方 30 秒。",
+                "說出三件你愛對方的理由。"
+            ];
+
             const result = document.getElementById("truthDareResult");
-            let item = "";
-            if (type === "truth") {
-                item = truths[Math.floor(Math.random() * truths.length)];
-            } else {
-                item = dares[Math.floor(Math.random() * dares.length)];
-            }
-            result.innerHTML = `${type === 'truth' ? '真心話' : '大冒險'}：${item}`;
+            const item = type === "truth" ? truths[Math.floor(Math.random() * truths.length)] : dares[Math.floor(Math.random() * dares.length)];
+            result.innerText = `${type === 'truth' ? '真心話' : '大冒險'}：${item}`;
         }
 
         function addWish() {
@@ -213,12 +196,17 @@
         }
 
         function showSection(sectionId) {
-            ["wheel", "truthDare", "questionnaire", "wishlist"].forEach(id => {
-                document.getElementById(id).style.display = id === sectionId ? "block" : "none";
+            ["board", "truthDare", "questionnaire", "wishlist"].forEach(id => {
+                document.getElementById(id).style.display = id === sectionId ? "grid" : "none";
+                if (id === "board" && sectionId === "board") {
+                    document.getElementById("diceButton").style.display = "block";
+                } else if (id === "board") {
+                    document.getElementById("diceButton").style.display = "none";
+                }
             });
         }
 
-        createWheel();
+        createBoard();
     </script>
 
 </body>
