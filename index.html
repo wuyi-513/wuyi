@@ -112,12 +112,15 @@
             color: white;
             border-radius: 5px;
             position: relative;
+            border: 2px solid #d63384;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
         }
         .player1, .player2 {
             width: 20px;
             height: 20px;
             border-radius: 50%;
             position: absolute;
+            transition: transform 0.5s ease;
         }
         .player1 {
             background-color: #d63384;
@@ -138,6 +141,18 @@
             border-radius: 5px;
             cursor: pointer;
             margin-top: 20px;
+            animation: bounce 1s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
         }
         #currentPlayer {
             margin-top: 10px;
@@ -149,6 +164,30 @@
             font-size: 20px;
             font-weight: bold;
             color: #e63946;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        /* 任務彈窗 */
+        #taskModal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            z-index: 2000;
+        }
+        #taskModal button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #d63384;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -176,6 +215,13 @@
         <button id="diceButton" onclick="rollDice()">擲骰子！</button>
         <div id="currentPlayer">當前玩家：玩家 1</div>
         <div id="result"></div>
+    </div>
+
+    <!-- 任務彈窗 -->
+    <div id="taskModal">
+        <h2 id="taskTitle">任務</h2>
+        <p id="taskDescription"></p>
+        <button onclick="closeTaskModal()">確定</button>
     </div>
 
     <script>
@@ -272,12 +318,23 @@
             const newTile = tiles[playerPositions[currentPlayer]];
             newTile.appendChild(playerPiece);
 
-            // 顯示當前任務
-            document.getElementById("result").innerText = `${playerNames[currentPlayer]} 的任務是：${newTile.innerText}`;
+            // 顯示任務彈窗
+            showTaskModal(`${playerNames[currentPlayer]} 的任務`, newTile.innerText);
 
             // 切換玩家
             currentPlayer = (currentPlayer + 1) % 2;
             document.getElementById("currentPlayer").innerText = `當前玩家：${playerNames[currentPlayer]}`;
+        }
+
+        // 任務彈窗
+        function showTaskModal(title, description) {
+            document.getElementById("taskTitle").innerText = title;
+            document.getElementById("taskDescription").innerText = description;
+            document.getElementById("taskModal").style.display = "block";
+        }
+
+        function closeTaskModal() {
+            document.getElementById("taskModal").style.display = "none";
         }
     </script>
 
