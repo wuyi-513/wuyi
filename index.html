@@ -297,6 +297,7 @@
 
     <script>
         let playerNames = ["玩家 1", "玩家 2"];
+        let isRolling = false;
 
         // 開場動畫
         window.onload = function() {
@@ -370,6 +371,9 @@
         }
 
         function rollDice() {
+            if (isRolling) return;
+            isRolling = true;
+
             const dice = document.getElementById("dice");
             const diceRoll = Math.floor(Math.random() * 6) + 1;
 
@@ -409,11 +413,11 @@
                 } else {
                     clearInterval(moveInterval);
                     const newTile = tiles[playerPositions[currentPlayer]];
-                    playerPiece.style.animation = "pop 0.5s ease";
                     showTaskModal(`${playerNames[currentPlayer]} 的任務`, newTile.innerText);
 
                     currentPlayer = (currentPlayer + 1) % 2;
                     document.getElementById("currentPlayer").innerText = `當前玩家：${playerNames[currentPlayer]}`;
+                    isRolling = false;
                 }
             }, 500);
         }
