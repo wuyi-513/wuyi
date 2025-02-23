@@ -48,21 +48,20 @@
             border-radius: 5px;
             position: relative;
         }
-        .player1 {
+        .player1, .player2 {
             width: 20px;
             height: 20px;
-            background-color: #d63384;
             border-radius: 50%;
             position: absolute;
+            transition: transform 0.5s ease;
+        }
+        .player1 {
+            background-color: #d63384;
             top: 5px;
             left: 5px;
         }
         .player2 {
-            width: 20px;
-            height: 20px;
             background-color: #3498db;
-            border-radius: 50%;
-            position: absolute;
             bottom: 5px;
             right: 5px;
         }
@@ -75,15 +74,29 @@
             border-radius: 5px;
             cursor: pointer;
             margin-top: 20px;
+            animation: bounce 1s infinite;
         }
         #diceButton:hover {
             background-color: #b12c6e;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
         }
         #result {
             margin-top: 20px;
             font-size: 20px;
             font-weight: bold;
             color: #e63946;
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
         #currentPlayer {
             margin-top: 10px;
@@ -175,8 +188,16 @@
         }
 
         function rollDice() {
-            const diceRoll = Math.floor(Math.random() * 6) + 1;
-            movePlayer(diceRoll);
+            const diceButton = document.getElementById("diceButton");
+            diceButton.disabled = true;
+            diceButton.innerText = "擲骰子中...";
+
+            setTimeout(() => {
+                const diceRoll = Math.floor(Math.random() * 6) + 1;
+                movePlayer(diceRoll);
+                diceButton.disabled = false;
+                diceButton.innerText = "擲骰子！";
+            }, 1000); // 模擬擲骰子動畫延遲
         }
 
         function movePlayer(steps) {
@@ -194,7 +215,12 @@
             newTile.appendChild(playerPiece);
 
             // 顯示當前任務
-            document.getElementById("result").innerText = `玩家 ${currentPlayer + 1} 的任務是：${tasks[playerPositions[currentPlayer]]}`;
+            const resultDiv = document.getElementById("result");
+            resultDiv.style.opacity = 0;
+            setTimeout(() => {
+                resultDiv.innerText = `玩家 ${currentPlayer + 1} 的任務是：${tasks[playerPositions[currentPlayer]]}`;
+                resultDiv.style.opacity = 1;
+            }, 300);
 
             // 切換玩家
             currentPlayer = (currentPlayer + 1) % 2;
